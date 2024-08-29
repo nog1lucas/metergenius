@@ -8,14 +8,13 @@ import {
 } from 'typeorm';
 import { Customer } from './customer.entity';
 
-@Entity()
+@Entity({ name: 'Historico_de_Consumo' })
 export class ConsumptionRecord {
-
   @PrimaryGeneratedColumn()
   id!: number;
 
   @ManyToOne(() => Customer)
-  @JoinColumn({ name: 'customer_id' })
+  @JoinColumn({ name: 'cliente_id' })
   customer!: Customer;
 
   @Column({ type: 'enum', enum: ['WATER', 'GAS'] })

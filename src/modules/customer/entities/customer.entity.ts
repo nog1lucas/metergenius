@@ -8,9 +8,8 @@ import {
 } from 'typeorm';
 import { ConsumptionRecord } from './consumption-record.entity';
 
-@Entity()
+@Entity({ name: 'Clientes' })
 export class Customer {
-
   @PrimaryGeneratedColumn()
   id!: number;
 
@@ -32,20 +31,20 @@ export class Customer {
   @Column()
   postalCode!: string;
 
-  @Column({ type: 'enum', enum: ['INDIVIDUAL', 'COMPANY'] })
-  customerType!: 'INDIVIDUAL' | 'COMPANY'; // Tipo de cliente: pessoa física ou jurídica
+  @Column({ type: 'enum', enum: ['PF', 'PJ'] })
+  customerType!: 'PF' | 'PJ';
 
   @Column({ nullable: true })
-  firstName?: string; // Nome (só para pessoas físicas)
+  firstName?: string;
 
   @Column({ nullable: true })
-  lastName?: string; // Sobrenome (só para pessoas físicas)
+  lastName?: string;
 
   @Column({ nullable: true })
-  companyName?: string; // Nome da empresa (só para pessoas jurídicas)
+  companyName?: string;
 
   @Column({ nullable: true })
-  taxId?: string; // CPF ou CNPJ, dependendo do tipo de cliente
+  taxId?: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;

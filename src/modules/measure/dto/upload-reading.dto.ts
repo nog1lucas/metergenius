@@ -6,20 +6,19 @@ export enum MeasureType {
 }
 
 export class UploadReadingDto {
+  @IsString()
+  @IsNotEmpty()
+  image: string;
 
   @IsString()
   @IsNotEmpty()
-  image: string; 
-
-  @IsString()
-  @IsNotEmpty()
-  customerCode: string; 
+  customer_code: string;
 
   @IsDateString()
   @IsNotEmpty()
-  measureDatetime: string; 
+  measure_datetime: string;
 
   @IsEnum(MeasureType)
   @IsNotEmpty()
-  measureType: MeasureType;
+  measure_type: MeasureType;
 }
