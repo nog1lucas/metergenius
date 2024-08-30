@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Between, DataSource, Repository } from 'typeorm';
-import { MeasureType, Reading } from '../entities/reading.entity';
+import { MeasureType, Measure } from '../entities/measure.entity';
 
 @Injectable()
-export class ReadingRepository extends Repository<Reading> {
+export class MeasureRepository extends Repository<Measure> {
   constructor(private readonly dataSource: DataSource) {
-    super(Reading, dataSource.createEntityManager());
+    super(Measure, dataSource.createEntityManager());
   }
 
   /**
-   * Check if signerKey exists for the contract's supplier.
+   * Check if already exists measure in these month for a specific type of measure.
    * @param userId to check signerKey for.
    * @returns The signerKey if exists, otherwise null.
    */
-  async isReadingExists(customerCode: string, measureType: MeasureType): Promise<boolean> {
+  async isMeasurementExists(customerCode: string, measureType: MeasureType): Promise<boolean> {
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);

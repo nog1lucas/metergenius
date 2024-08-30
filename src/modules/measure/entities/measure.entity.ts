@@ -6,7 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm';
-import { Customer } from './customer.entity';
+import { Customer } from '../../customer/entities/customer.entity';
 
 export enum MeasureType {
   WATER = 'WATER',
@@ -14,11 +14,11 @@ export enum MeasureType {
 }
 
 @Entity()
-export class Reading {
+export class Measure  {
   @PrimaryGeneratedColumn('uuid')
   id!: number;
 
-  @ManyToOne(() => Customer, (customer) => customer.consumptionRecords)
+  @ManyToOne(() => Customer, (customer) => customer.measures)
   @JoinColumn()
   customer!: Customer;
 
@@ -29,11 +29,8 @@ export class Reading {
   type!: MeasureType;
 
   @Column({ type: 'float' })
-  amount!: number;
+  consumption_value!: number;
 
-  @Column({ type: 'date' })
-  readingDate!: Date;
-
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
+  @CreateDateColumn()
+  created_at!: Date;
 }

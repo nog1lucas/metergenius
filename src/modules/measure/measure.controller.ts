@@ -2,14 +2,12 @@ import {
   Controller,
   Post,
   Body,
-  HttpException,
   HttpStatus,
   HttpCode,
-  BadRequestException,
-  ConflictException,
+  Get,
 } from '@nestjs/common';
 import { MeasureService } from './services/measure.service';
-import { UploadReadingDto } from './dto/upload-reading.dto';
+import { UploadMeasureDto } from './dto/upload-measure.dto';
 
 @Controller('measures')
 export class MeasureController {
@@ -17,22 +15,19 @@ export class MeasureController {
 
   @Post('upload')
   @HttpCode(HttpStatus.OK)
-  async uploadImage(@Body() uploadReadingDto: UploadReadingDto) {
-    try {
-      // Chamando o serviço para processar o upload da imagem e obter a medida
-     return await this.measureService.processUpload(uploadReadingDto.image);
-    } catch (error) {
+  async uploadImage(@Body() uploadMeasureDto: UploadMeasureDto) {
+    console.log("bateu")
+     return await this.measureService.processUpload(uploadMeasureDto);
+  }
 
+  @Get('teste')
+  async teste() {
+    console.log("bateu")
+  }
       // throw new BadRequestException({
       //   error_code: 'INVALID_DATA',
       //   error_description: "Os dados fornecidos no corpo da requisição são inválidos"
       // });
-      // throw new ConflictException({
-      //   error_code: 'DOUBLE_REPORT',
-      //   error_description: ""Leitura do mês já realizada"  
-      //});
-    }
-    }
 
   //   @Patch('confirm')
   //   async confirmReading(@Body() confirmReadingDto: ConfirmReadingDto) {

@@ -1,9 +1,9 @@
 import { IsString, IsNotEmpty, IsDateString, IsEnum, Matches, IsNumber } from 'class-validator';
 import { IsBase64OrDataUri } from '../../../common/decorators/is-base64-or-datauri.decorator';
-import { MeasureType } from '@/modules/customer/entities/reading.entity';
+import { MeasureType } from '../entities/measure.entity';
 
-export class UploadReadingDto {
-  @IsNumber()
+export class UploadMeasureDto {
+  @IsString()
   @IsNotEmpty()
   @IsBase64OrDataUri({
     message: 'The image field must be a valid Base64 or data URI',

@@ -5,8 +5,9 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
-import { Reading } from './reading.entity';
+import { Measure } from '../../measure/entities/measure.entity';
 
 @Entity()
 export class Customer {
@@ -17,7 +18,7 @@ export class Customer {
   email!: string;
 
   @Column()
-  phoneNumber!: string;
+  phone_number!: string;
 
   @Column()
   address!: string;
@@ -29,26 +30,26 @@ export class Customer {
   state!: string;
 
   @Column()
-  postalCode!: string;
+  postal_code!: string;
 
   @Column({ nullable: true })
-  firstName?: string;
+  first_name?: string;
 
   @Column({ nullable: true })
-  lastName?: string;
+  last_name?: string;
 
   @Column({ nullable: true })
-  companyName?: string;
+  company_name?: string;
 
-  @Column({ nullable: true })
-  taxId?: string;
+  @CreateDateColumn()
+  created_at!: Date;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
+  @UpdateDateColumn()
+  updated_at!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt!: Date;
+  @DeleteDateColumn()
+  deleted_at?: Date;
 
-  @OneToMany(() => Reading, (record) => record.customer)
-  consumptionRecords!: Reading[];
+  @OneToMany(() => Measure, (measure) => measure.customer)
+  measures!: Measure[];
 }

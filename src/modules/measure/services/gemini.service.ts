@@ -25,10 +25,6 @@ export class GeminiService {
     this.fileManager = new GoogleAIFileManager(apiKey);
   }
 
-  private async checkForExistingReading(month: string, readingType: string): Promise<void> {
-    // Implementar a lógica para verificar leituras existentes no mês atual para o tipo de leitura
-  }
-
   private async uploadImage(base64Image: string): Promise<UploadResponse> {
     const tempFilePath = path.join(__dirname, 'temp_image.jpg');
     await fs.writeFile(tempFilePath, Buffer.from(base64Image, 'base64'));
@@ -77,7 +73,6 @@ export class GeminiService {
 
       return {
         imageUri: fileMetadata.uri,
-        guid: uploadResponse.file.name, // Usando o name como GUID
         recognizedValue: resultText,
       };
     } catch (error) {
