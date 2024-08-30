@@ -1,13 +1,13 @@
-import { IsString, IsNotEmpty, IsDateString, IsEnum } from 'class-validator';
-
-export enum MeasureType {
-  WATER = 'WATER',
-  GAS = 'GAS',
-}
+import { IsString, IsNotEmpty, IsDateString, IsEnum, Matches, IsNumber } from 'class-validator';
+import { IsBase64OrDataUri } from '../../../common/decorators/is-base64-or-datauri.decorator';
+import { MeasureType } from '@/modules/customer/entities/reading.entity';
 
 export class UploadReadingDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
+  @IsBase64OrDataUri({
+    message: 'The image field must be a valid Base64 or data URI',
+  })
   image: string;
 
   @IsString()

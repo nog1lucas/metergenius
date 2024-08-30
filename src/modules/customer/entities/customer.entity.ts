@@ -6,12 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ConsumptionRecord } from './consumption-record.entity';
+import { Reading } from './reading.entity';
 
-@Entity({ name: 'Clientes' })
+@Entity()
 export class Customer {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column({ unique: true })
   email!: string;
@@ -31,9 +31,6 @@ export class Customer {
   @Column()
   postalCode!: string;
 
-  @Column({ type: 'enum', enum: ['PF', 'PJ'] })
-  customerType!: 'PF' | 'PJ';
-
   @Column({ nullable: true })
   firstName?: string;
 
@@ -52,6 +49,6 @@ export class Customer {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 
-  @OneToMany(() => ConsumptionRecord, (record) => record.customer)
-  consumptionRecords!: ConsumptionRecord[];
+  @OneToMany(() => Reading, (record) => record.customer)
+  consumptionRecords!: Reading[];
 }

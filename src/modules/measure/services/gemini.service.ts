@@ -2,8 +2,8 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GoogleAIFileManager } from '@google/generative-ai/server';
+import * as path from 'path'
 import { promises as fs } from 'fs';
-import * as path from 'path';
 
 interface UploadResponse {
   file: {
@@ -11,12 +11,6 @@ interface UploadResponse {
     mimeType: string;
     uri: string;
     displayName?: string;
-  };
-}
-
-interface GenerateContentResponse {
-  response: {
-    text: () => string;
   };
 }
 
@@ -31,87 +25,64 @@ export class GeminiService {
     this.fileManager = new GoogleAIFileManager(apiKey);
   }
 
-  private async saveToTempFile(imageBuffer: Buffer): Promise<string> {
+  private async checkForExistingReading(month: string, readingType: string): Promise<void> {
+    // Implementar a lógica para verificar leituras existentes no mês atual para o tipo de leitura
+  }
+
+  private async uploadImage(base64Image: string): Promise<UploadResponse> {
     const tempFilePath = path.join(__dirname, 'temp_image.jpg');
-    await fs.writeFile(tempFilePath, imageBuffer);
-    return tempFilePath;
-  }
+    await fs.writeFile(tempFilePath, Buffer.from(base64Image, 'base64'));
 
-  private async deleteTempFile(tempFilePath: string): Promise<void> {
-    await fs.unlink(tempFilePath);
-  }
-
-  private async uploadFile(tempFilePath: string): Promise<UploadResponse> {
-    return this.fileManager.uploadFile(tempFilePath, { mimeType: 'image/jpeg' });
+    try {
+      const uploadResponse = await this.fileManager.uploadFile(tempFilePath, {
+        mimeType: 'image/jpeg',
+        displayName: 'Uploaded Image',
+      });
+      return uploadResponse;
+    } finally {
+      await fs.unlink(tempFilePath); // Limpeza do arquivo temporário
+    }
   }
 
   private async getFileMetadata(fileName: string): Promise<any> {
     return this.fileManager.getFile(fileName);
   }
 
-  private async generateContent(fileUri: string): Promise<any> {
-    const model = await this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
-    });
+  private async generateContent(fileUri: string): Promise<string> {
+    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const prompt = "Extract the value from the image";
 
-    return model.generateContent([
-      {
-        fileData: {
-          mimeType: 'image/jpeg',
-          fileUri: fileUri,
-        },
-      },
-      {
-        text: "Obtain the names in picture",
-      },
+    const result = await model.generateContent([
+      { fileData: { mimeType: 'image/jpeg', fileUri } },
+      { text: prompt },
     ]);
+
+
+    console.log("result", result.response)
+    return result.response.text();
   }
 
-  async processImage(imageBuffer: Buffer): Promise<any> {
+  async processImage(base64Image: string): Promise<any> {
+    // Exemplo de chamada para verificar leituras existentes
+    // await this.checkForExistingReading('current_month', 'reading_type');
+
     try {
-      // Define MIME type as image/jpeg
-      const mimeType = 'image/jpeg';
-      
-      // Save the image buffer to a temporary file
-      const tempFilePath = await this.saveToTempFile(imageBuffer);
-
-      // Upload the file and get response
-      const uploadResponse = await this.uploadFile(tempFilePath);
-
-      // Delete the temporary file
-      await this.deleteTempFile(tempFilePath);
-
-      // Get file metadata
+      const uploadResponse = await this.uploadImage(base64Image);
       const fileMetadata = await this.getFileMetadata(uploadResponse.file.name);
 
       console.log(`Retrieved file ${fileMetadata.displayName} as ${fileMetadata.uri}`);
 
-      // Generate content based on the uploaded file
-      const result = await this.generateContent(uploadResponse.file.uri);
+      const resultText = await this.generateContent(fileMetadata.uri);
+      console.log('Content generation result:', resultText);
 
-      console.log("Content generation result:", result);
-      
-      return result.response.text();
-
+      return {
+        imageUri: fileMetadata.uri,
+        guid: uploadResponse.file.name, // Usando o name como GUID
+        recognizedValue: resultText,
+      };
     } catch (error) {
       console.error('Error processing image:', error);
       throw new BadRequestException('Failed to process image');
     }
-  }
-
-  findAll(): string {
-    return 'This action returns all customers';
-  }
-
-  findOne(id: number): string {
-    return `This action returns a #${id} customer`;
-  }
-
-  update(id: number, updateCustomerDto: any): string {
-    return `This action updates a #${id} customer`;
-  }
-
-  remove(id: number): string {
-    return `This action removes a #${id} customer`;
   }
 }

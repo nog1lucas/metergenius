@@ -5,9 +5,9 @@ import { GeminiService } from './gemini.service';
 export class MeasureService {
   constructor(private readonly geminiService: GeminiService) {}
 
-  async processUpload(image: string): Promise<string> {
+  async processUpload(image: string): Promise<{ imageUrl: string; measureValue: string; measureUuid: string }> {
     try {
-      // Verifica se a string é uma data URL ou apenas base64
+      // Verifica se a string é uma data URL ou apenas base64 e converte para Buffer
       let base64Data: string;
       if (image.startsWith('data:image/')) {
         base64Data = image.replace(/^data:image\/\w+;base64,/, '');
@@ -15,30 +15,24 @@ export class MeasureService {
         base64Data = image;
       }
 
-      const imageBuffer = Buffer.from(base64Data, 'base64');
+      
+      
+      // Processa a imagem utilizando o GeminiService
+      const result = await this.geminiService.processImage(base64Data);
 
-      await this.geminiService.processImage(imageBuffer);
+      console.log("result", result)
 
-      return 'Image processed successfully';
+      return result
+      
+      // Simulação de retorno, substitua com lógica adequada conforme resposta da API
+      // return {
+      //   imageUrl: 'https://example.com/image.jpg',  // Substitua com a URL da imagem retornada (se aplicável)
+      //   measureValue,
+      //   measureUuid: 'some-unique-id',  // Substitua com o UUID retornado (se aplicável)
+      // };
     } catch (error) {
       console.error('Error processing image:', error);
       throw new BadRequestException('Error processing image');
     }
-  }
-
-  findAll(): string {
-    return 'This action returns all customers';
-  }
-
-  findOne(id: number): string {
-    return `This action returns a #${id} customer`;
-  }
-
-  update(id: number, updateCustomerDto: any): string {
-    return `This action updates a #${id} customer`;
-  }
-
-  remove(id: number): string {
-    return `This action removes a #${id} customer`;
   }
 }
