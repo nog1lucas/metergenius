@@ -5,21 +5,23 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Customer } from '../../customer/entities/customer.entity';
 
 export enum MeasureType {
-  WATER = 'WATER',
-  GAS = 'GAS',
+  WATER = 'water',
+  GAS = 'gas',
 }
 
 @Entity()
 export class Measure  {
   @PrimaryGeneratedColumn('uuid')
-  id!: number;
+  id!: string;
 
   @ManyToOne(() => Customer, (customer) => customer.measures)
-  @JoinColumn()
+  @JoinColumn({name: 'customer_id'})
   customer!: Customer;
 
   @Column({
@@ -28,9 +30,21 @@ export class Measure  {
   })
   type!: MeasureType;
 
-  @Column({ type: 'float' })
-  consumption_value!: number;
+  @Column()
+  value!: number;
+
+  @Column()
+  image_url!: string; 
+
+  @Column({ default: false })
+  has_confirmed!: boolean;
 
   @CreateDateColumn()
   created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
+
+  @DeleteDateColumn()
+  deleted_at!: Date;
 }

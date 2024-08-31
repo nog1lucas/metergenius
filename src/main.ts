@@ -4,9 +4,9 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TypeOrmExceptionFilter } from './common/filters/typeorm.filter';
 import { LoggerService } from './modules/logger/logger.service';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 function setupSwagger(app) {
   const options = new DocumentBuilder()
